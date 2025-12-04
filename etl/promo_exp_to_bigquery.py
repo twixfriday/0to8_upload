@@ -23,8 +23,10 @@ def fetch_page(api_key: str, offset: int):
         "limit": LIMIT,
         "offset": offset,
     }
-    headers = {"X-Admin-Api-Key": api_key}
+    headers = {"X-Admin-Api-Key": api_key}  # must look like this
     resp = requests.get(url, params=params, headers=headers, timeout=60)
+    print("DEBUG status:", resp.status_code, "headers sent:", headers)
+    print("DEBUG body:", resp.text[:300])
     resp.raise_for_status()
     data = resp.json()
    
