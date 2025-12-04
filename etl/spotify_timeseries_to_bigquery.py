@@ -96,3 +96,25 @@ def main():
         for track in tracks:
             # skip if no ISRC or no sp_json
             if not track.get("isrc") or not track.get("sp_json"):
+                continue
+
+            rows_to_insert.extend(flatten_sp_json(track))
+
+        if not rows_to_insert:
+            offset += LIMIT
+            continue
+
+        errors = client.insert_rows_json(table_ref, rows_to_insert)
+        if errors:
+            raise RuntimeError(f"BigQuery insert errors: {errors}")
+
+        batch_count = len(rows_to_insert)
+        total_rows += batch_count
+        print(f"Inserted batch at offset={offset}, rows={batch_count}")
+        offset += LIMIT
+
+    print(f"Inserted total {total_rows} rows into {project_id}.{dataset_id}.{table_id}")
+
+
+if __name__ == "__main__":
+    main()
