@@ -1,0 +1,4 @@
+defaultProject: dotted-cedar-473703-a1
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.35
