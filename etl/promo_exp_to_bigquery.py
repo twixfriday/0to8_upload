@@ -23,16 +23,16 @@ def fetch_page(api_key: str, offset: int):
         "limit": LIMIT,
         "offset": offset,
     }
-    headers = {"X-Admin-Api-Key": api_key}  # must look like this
+    headers = {"X-Admin-Api-Key": api_key}
     resp = requests.get(url, params=params, headers=headers, timeout=60)
     print("DEBUG status:", resp.status_code, "headers sent:", headers)
     print("DEBUG body:", resp.text[:300])
     resp.raise_for_status()
     data = resp.json()
-   
-    if isinstance(data, list):
-        return data
-    return data.get("results", [])
+
+    # API shape: {"success": true, "data": [...]}
+    items = data.get("data", [])
+    return items
 
 
 def to_bq_rows(items):
