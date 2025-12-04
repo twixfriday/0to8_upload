@@ -40,12 +40,13 @@ def to_bq_rows(items):
         rows.append(
             {
                 "id": x["id"],
-                "coda_row_id": x.get("coda_row_id"),
+                "promo_expense_id": x.get("promo_expense_id"),
                 "views": x.get("views"),
                 "likes": x.get("likes"),
                 "comments": x.get("comments"),
                 "shares": x.get("shares"),
                 "snapshot_date": x.get("snapshot_date"),
+                "created_at": x.get("created_at"),
             }
         )
     return rows
