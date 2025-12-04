@@ -5,7 +5,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 API_BASE_URL = "https://tamerlan-0to8-0to8-music-recognition-a469.twc1.net/api/admin"
-LIMIT = 500  # page size for pagination
+LIMIT = 500 
 
 
 def get_bq_client() -> bigquery.Client:
@@ -27,7 +27,7 @@ def fetch_page(api_key: str, offset: int):
     resp = requests.get(url, params=params, headers=headers, timeout=60)
     resp.raise_for_status()
     data = resp.json()
-    # adjust if your API wraps results
+   
     if isinstance(data, list):
         return data
     return data.get("results", [])
@@ -102,7 +102,7 @@ def main():
         batch_count = len(rows)
         total_rows += batch_count
         print(f"Inserted batch at offset={offset}, rows={batch_count}")
-        offset += LIMIT  # next page
+        offset += LIMIT 
 
     print(f"Inserted total {total_rows} rows into {project_id}.{dataset_id}.{table_id}")
 
