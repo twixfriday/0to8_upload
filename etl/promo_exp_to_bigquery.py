@@ -23,7 +23,7 @@ def fetch_page(api_key: str, offset: int):
         "limit": LIMIT,
         "offset": offset,
     }
-    headers = {"Authorization": f"Token {api_key}"}
+    headers = {"X-Admin-Api-Key": api_key}
     resp = requests.get(url, params=params, headers=headers, timeout=60)
     resp.raise_for_status()
     data = resp.json()
