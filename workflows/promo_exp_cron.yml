@@ -1,0 +1,33 @@
+name: promo-exp-to-bigquery
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # every 3 hours (UTC)
+  workflow_dispatch: {}      # allow manual run
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run ETL to BigQuery
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
+          BQ_DATASET_ID: raw_tiktok
+          BQ_TABLE_ID: promo_exp
+        run: |
+          python etl/promo_exp_to_bigquery.py
