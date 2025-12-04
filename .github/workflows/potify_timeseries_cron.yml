@@ -1,0 +1,33 @@
+name: spotify-timeseries-to-bigquery
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # every 3 hours (UTC)
+  workflow_dispatch: {}      # allow manual trigger
+
+jobs:
+  run-spotify-timeseries-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Spotify timeseries ETL
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
+          BQ_TS_DATASET_ID: raw_tiktok
+          BQ_TS_TABLE_ID: spotify_timeseries
+        run: |
+          python etl/spotify_timeseries_to_bigquery.py
