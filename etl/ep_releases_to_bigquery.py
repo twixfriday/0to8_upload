@@ -32,14 +32,17 @@ def fetch_page(api_key: str, offset: int):
 
 
 def flatten_release_snapshot(rel):
-    """
-    Snapshot row for ep_release table.
-    """
     def to_int(v):
         return int(v) if v not in (None, "") else None
 
     def to_float(v):
         return float(v) if v not in (None, "") else None
+
+    def to_bool_from_error(v):
+        # пример: любое ненулевое сообщение считаем True (есть ошибка)
+        if v in (None, ""):
+            return None
+        return True
 
     return {
         "id": str(rel.get("id")),
@@ -63,9 +66,8 @@ def flatten_release_snapshot(rel):
         "created_at": rel.get("created_at"),
         "last_parse_status": rel.get("last_parse_status"),
         "last_parse_attempt_at": rel.get("last_parse_attempt_at"),
-        "last_parse_error": rel.get("last_parse_error"),
+        "last_parse_error": to_bool_from_error(rel.get("last_parse_error")),
     }
-
 
 def flatten_release_timeseries(rel):
     """
