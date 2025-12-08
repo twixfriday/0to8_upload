@@ -88,6 +88,12 @@ def main():
     client = get_bq_client()
     table_ref = client.dataset(dataset_id).table(table_id)
 
+    # Overwrite: clear table before this run
+    truncate_sql = f"truncate table `{project_id}.{dataset_id}.{table_id}`"
+    print(f"Running: {truncate_sql}")
+    client.query(truncate_sql).result()
+    print("Table truncated before load")
+
     offset = 0
     total_rows = 0
 
@@ -104,10 +110,7 @@ def main():
         batch_count = len(rows)
         total_rows += batch_count
         print(f"Inserted batch at offset={offset}, rows={batch_count}")
-        offset += LIMIT 
+        offset += LIMIT
 
     print(f"Inserted total {total_rows} rows into {project_id}.{dataset_id}.{table_id}")
 
-
-if __name__ == "__main__":
-    main()
