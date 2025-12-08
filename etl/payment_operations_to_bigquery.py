@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import re
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
@@ -38,11 +39,15 @@ def fetch_page(api_key: str, offset: int):
 
 
 def to_float(v):
-    try:
-        if v is None or v != v:
-            return None
+    if v is None or v != v or v == "":
+        return None
+    if isinstance(v, (int, float)):
         return float(v)
-    except (TypeError, ValueError):
+    # strip non-numeric characters (e.g. currency symbols, spaces)
+    cleaned = re.sub(r"[^0-9.\-]", "", str(v))
+    try:
+        return float(cleaned) if cleaned != "" else None
+    except ValueError:
         return None
 
 
