@@ -5,7 +5,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 BASE_URL = "https://tamerlan-0to8-0to8-music-recognition-a469.twc1.net/api/admin/snapshots"
-LIMIT = 500  # adjust if needed
+LIMIT = 500
 
 
 def get_bq_client() -> bigquery.Client:
@@ -40,13 +40,13 @@ def to_bq_rows(items):
         rows.append(
             {
                 "id": x["id"],
-                "coda_row_id": x.get("coda_row_id"),
+                "promo_expense_id": x.get("promo_expense_id"),
                 "views": x.get("views"),
                 "likes": x.get("likes"),
                 "comments": x.get("comments"),
                 "shares": x.get("shares"),
-                # API returns full timestamp, table column snapshot_date is TIMESTAMP
                 "snapshot_date": x.get("snapshot_date"),
+                "created_at": x.get("created_at"),
             }
         )
     return rows
