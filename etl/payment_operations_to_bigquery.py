@@ -112,6 +112,12 @@ def main():
     client = get_bq_client()
     table_ref = client.dataset(dataset_id).table(table_id)
 
+    # *** Overwrite: clear table before inserting this run ***
+    truncate_sql = f"truncate table `{project_id}.{dataset_id}.{table_id}`"
+    print(f"Running: {truncate_sql}")
+    client.query(truncate_sql).result()
+    print("Table truncated before load")
+
     offset = 0
     total_rows = 0
 
@@ -138,6 +144,7 @@ def main():
         f"Inserted total {total_rows} rows into "
         f"{project_id}.{dataset_id}.{table_id}"
     )
+
 
 
 if __name__ == "__main__":
