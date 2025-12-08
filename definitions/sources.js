@@ -9,7 +9,8 @@
     "tiktok_videos",
     "tiktok_hashtags",
     "tiktok_media_urls",
-    "payment_operations"
+    "payment_operations",
+    "promo_exp"
 ].forEach(name =>
     declare({
         database: "dotted-cedar-473703-a1", // your GCP project id

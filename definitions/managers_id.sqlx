@@ -1,0 +1,13 @@
+config {
+    type: "table",
+    schema: "service",
+    name: "manager_id"
+}
+
+SELECT
+  id,
+  telegram_manager_nickname
+FROM
+  ${ref("promo_exp")}
+GROUP BY
+  id
