@@ -1,13 +1,16 @@
 config {
     type: "table",
-    schema: "service",
+    schema: "analytics",
     name: "manager_id"
 }
 
 SELECT
-  id,
+  telegram_manager_id,
   telegram_manager_nickname
 FROM
   ${ref("promo_exp")}
 GROUP BY
-  id
+  telegram_manager_id,
+  telegram_manager_nickname
+HAVING
+  telegram_manager_id IS NOT NULL

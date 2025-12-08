@@ -1,0 +1,12 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_exp_with_manager"
+}
+
+select
+  p.*,
+  m.telegram_manager_nickname as manager_nickname
+from ${ref("promo_exp")} as p
+left join ${ref("manager_id")}as m
+  on p.id = m.id
