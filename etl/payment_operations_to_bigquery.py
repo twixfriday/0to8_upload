@@ -37,16 +37,32 @@ def fetch_page(api_key: str, offset: int):
         raise RuntimeError(f"API error or invalid data at offset {offset}: {data}")
     return data["data"]
 
-
 def to_float(v):
     if v is None or v != v or v == "":
         return None
     if isinstance(v, (int, float)):
         return float(v)
-    # strip non-numeric characters (e.g. currency symbols, spaces)
-    cleaned = re.sub(r"[^0-9.\-]", "", str(v))
+
+    s = str(v).strip()
+
+    # If there is a comma and no dot, assume comma is decimal separator (e.g. "20,00")
+    if "," in s and "." not in s:
+        s = s.replace(".", "")      # just in case of "2.000,50"
+        s = s.replace(",", ".")     # "20,00" -> "20.00"
+    else:
+        # remove thousands separators like "2,000" or "2 000"
+        s = s.replace(" ", "")
+        if s.count(".") > 1:
+            # too many dots, probably thousands separators: remove all but last
+            parts = s.split(".")
+            s = "".join(parts[:-1]) + "." + parts[-1]
+        s = s.replace(",", "")
+
+    # keep only digits, minus, and dot, just in case
+    s = re.sub(r"[^0-9.\-]", "", s)
+
     try:
-        return float(cleaned) if cleaned != "" else None
+        return float(s) if s != "" else None
     except ValueError:
         return None
 
