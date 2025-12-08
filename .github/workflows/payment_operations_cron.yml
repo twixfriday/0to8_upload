@@ -1,0 +1,33 @@
+name: payment-operations-to-bigquery
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # every 3 hours
+  workflow_dispatch: {}
+
+jobs:
+  run-payment-operations-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run payment operations ETL
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          API_KEY: ${{ secrets.API_KEY }}
+          BQ_PAYOPS_DATASET_ID: raw_tiktok
+          BQ_PAYOPS_TABLE_ID: payment_operations
+        run: |
+          python etl/payment_operations_to_bigquery.py
