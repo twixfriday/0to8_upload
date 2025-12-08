@@ -1,0 +1,19 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "pivot_manager_profile_counts"
+}
+
+select
+  p.manager_id,
+  p.manager_nickname,
+  p.profile_id,
+  count(p.id) as num_releases
+from ${ref("promo_exp_with_manager")} as p
+where
+  p.duplicate = false
+  and p.deleted = false
+group by
+  p.manager_id,
+  p.manager_nickname,
+  p.profile_id
