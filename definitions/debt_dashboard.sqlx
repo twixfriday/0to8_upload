@@ -54,7 +54,7 @@ WITH
   FROM
     ${ref("payment_operations")} AS o
   WHERE
-    o.unnamed_column = 'TikTok'
+    o.promo_platform = 'TikTok'
   GROUP BY
     o.profile_id,
     o.profile_name,
@@ -108,3 +108,4 @@ LEFT JOIN
   ${ref("manager_id")} AS man
 ON
   pay.telegram_manager_id = man.telegram_manager_id
+WHERE man.telegram_manager_id IS NOT NULL
