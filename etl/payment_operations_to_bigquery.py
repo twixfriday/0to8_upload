@@ -95,7 +95,7 @@ def to_row(x: dict) -> dict:
 
         "account_url": x.get("account_url"),
         "payment_platform": x.get("payment_platform"),
-        "unnamed_column": x.get("unnamed_column"),
+        "promo_platform": x.get("promo_platform"),
 
         "promotional_quantities": x.get("promotional_quantities"),
         "comment": x.get("comment"),
