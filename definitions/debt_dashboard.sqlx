@@ -1,0 +1,111 @@
+config {
+    type: "table",
+    schema: "analytics",
+    name: "pivot_manager_profile_counts"
+}
+
+WITH
+  payments AS (
+  SELECT
+    o.profile_id,
+    o.profile_name,
+    o.telegram_manager_id,
+    -- Paid (main)
+    SUM(CASE
+        WHEN o.status = 'Paid' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS paid_promotional_quantities,
+    SUM(CASE
+        WHEN o.status = 'Paid' THEN CAST(o.usd_value AS numeric)
+        ELSE 0
+    END
+      ) AS paid_usd_value,
+    MAX(CASE
+        WHEN o.status = 'Paid' THEN o.payment_date
+    END
+      ) AS paid_last_payment_date,
+    -- Other statuses: promo quantities only
+    SUM(CASE
+        WHEN o.status = 'Pending' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS pending_promotional_quantities,
+    SUM(CASE
+        WHEN o.status = 'Declined' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS declined_promotional_quantities,
+    SUM(CASE
+        WHEN o.status = 'Disput' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS disput_promotional_quantities,
+    SUM(CASE
+        WHEN o.status = 'Pause' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS pause_promotional_quantities,
+    SUM(CASE
+        WHEN o.status = 'Returned' THEN CAST(o.promotional_quantities AS int64)
+        ELSE 0
+    END
+      ) AS returned_promotional_quantities
+  FROM
+    ${ref("payment_operations")} AS o
+  WHERE
+    o.promo_platform = 'TikTok'
+  GROUP BY
+    o.profile_id,
+    o.profile_name,
+    o.telegram_manager_id ),
+  releases AS (
+  SELECT
+    p.manager_id,
+    p.profile_id,
+    COUNT(p.id) AS num_releases
+  FROM
+    ${ref("promo_exp_with_manager")} AS p
+  WHERE
+    p.duplicate = FALSE
+    AND p.deleted = FALSE
+  GROUP BY
+    p.manager_id,
+    p.profile_id )
+SELECT
+  pay.profile_id,
+  pay.profile_name,
+  man.telegram_manager_nickname,
+  pay.telegram_manager_id,
+  pay.paid_promotional_quantities,
+  pay.paid_usd_value,
+  pay.paid_last_payment_date,
+  pay.pending_promotional_quantities,
+  pay.declined_promotional_quantities,
+  pay.disput_promotional_quantities,
+  pay.pause_promotional_quantities,
+  pay.returned_promotional_quantities,
+  COALESCE(rel.num_releases, 0) AS num_releases,
+  pay.paid_promotional_quantities 
+  - COALESCE(rel.num_releases, 0) 
+  - pay.returned_promotional_quantities AS diff,
+  SAFE_DIVIDE(
+    pay.paid_usd_value * (
+      pay.paid_promotional_quantities
+      - COALESCE(rel.num_releases, 0)
+      - pay.returned_promotional_quantities
+    ),
+    pay.paid_promotional_quantities
+  ) AS usd_value_diff
+FROM
+  payments AS pay
+LEFT JOIN
+  releases AS rel
+ON
+  pay.profile_id = rel.profile_id
+  AND pay.telegram_manager_id = rel.manager_id
+LEFT JOIN
+  ${ref("manager_id")} AS man
+ON
+  pay.telegram_manager_id = man.telegram_manager_id
+WHERE man.telegram_manager_id IS NOT NULL

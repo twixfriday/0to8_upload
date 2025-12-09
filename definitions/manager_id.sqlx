@@ -1,0 +1,16 @@
+config {
+    type: "table",
+    schema: "analytics",
+    name: "manager_id"
+}
+
+SELECT
+  telegram_manager_id,
+  telegram_manager_nickname
+FROM
+  ${ref("promo_exp")}
+GROUP BY
+  telegram_manager_id,
+  telegram_manager_nickname
+HAVING
+  telegram_manager_id IS NOT NULL

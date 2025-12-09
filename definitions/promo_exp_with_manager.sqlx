@@ -1,0 +1,16 @@
+config {
+    type: "table",
+    schema: "analytics",
+    name: "promo_exp_with_manager"
+}
+
+SELECT
+  p.*,
+  m.telegram_manager_nickname AS manager_nickname,
+  m.telegram_manager_id AS manager_id
+FROM
+  ${ref("promo_exp")} AS p
+LEFT JOIN
+  ${ref("manager_id")}as m
+ON
+  p.telegram_manager_nickname = m.telegram_manager_nickname
