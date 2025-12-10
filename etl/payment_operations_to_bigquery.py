@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import re
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
@@ -36,13 +37,33 @@ def fetch_page(api_key: str, offset: int):
         raise RuntimeError(f"API error or invalid data at offset {offset}: {data}")
     return data["data"]
 
-
 def to_float(v):
-    try:
-        if v is None or v != v:
-            return None
+    if v is None or v != v or v == "":
+        return None
+    if isinstance(v, (int, float)):
         return float(v)
-    except (TypeError, ValueError):
+
+    s = str(v).strip()
+
+    # If there is a comma and no dot, assume comma is decimal separator (e.g. "20,00")
+    if "," in s and "." not in s:
+        s = s.replace(".", "")      # just in case of "2.000,50"
+        s = s.replace(",", ".")     # "20,00" -> "20.00"
+    else:
+        # remove thousands separators like "2,000" or "2 000"
+        s = s.replace(" ", "")
+        if s.count(".") > 1:
+            # too many dots, probably thousands separators: remove all but last
+            parts = s.split(".")
+            s = "".join(parts[:-1]) + "." + parts[-1]
+        s = s.replace(",", "")
+
+    # keep only digits, minus, and dot, just in case
+    s = re.sub(r"[^0-9.\-]", "", s)
+
+    try:
+        return float(s) if s != "" else None
+    except ValueError:
         return None
 
 
@@ -74,7 +95,7 @@ def to_row(x: dict) -> dict:
 
         "account_url": x.get("account_url"),
         "payment_platform": x.get("payment_platform"),
-        "unnamed_column": x.get("unnamed_column"),
+        "promo_platform": x.get("promo_platform"),
 
         "promotional_quantities": x.get("promotional_quantities"),
         "comment": x.get("comment"),
@@ -107,6 +128,12 @@ def main():
     client = get_bq_client()
     table_ref = client.dataset(dataset_id).table(table_id)
 
+    # *** Overwrite: clear table before inserting this run ***
+    truncate_sql = f"truncate table `{project_id}.{dataset_id}.{table_id}`"
+    print(f"Running: {truncate_sql}")
+    client.query(truncate_sql).result()
+    print("Table truncated before load")
+
     offset = 0
     total_rows = 0
 
@@ -133,6 +160,7 @@ def main():
         f"Inserted total {total_rows} rows into "
         f"{project_id}.{dataset_id}.{table_id}"
     )
+
 
 
 if __name__ == "__main__":
