@@ -76,7 +76,7 @@ SELECT
   pay.profile_id,
   pay.profile_name,
   man.telegram_manager_nickname,
-  pay.telegram_manager_id,
+  pay.telegram_manager_id as manager_id,
   pay.paid_promotional_quantities,
   pay.paid_usd_value,
   pay.paid_last_payment_date,
