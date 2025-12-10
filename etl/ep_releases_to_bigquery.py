@@ -39,7 +39,6 @@ def flatten_release_snapshot(rel):
         return float(v) if v not in (None, "") else None
 
     def to_bool_from_error(v):
-        # пример: любое ненулевое сообщение считаем True (есть ошибка)
         if v in (None, ""):
             return None
         return True
@@ -68,6 +67,7 @@ def flatten_release_snapshot(rel):
         "last_parse_attempt_at": rel.get("last_parse_attempt_at"),
         "last_parse_error": to_bool_from_error(rel.get("last_parse_error")),
     }
+
 
 def flatten_release_timeseries(rel):
     """
@@ -129,6 +129,18 @@ def main():
     snap_table_ref = client.dataset(snap_dataset_id).table(snap_table_id)
     ts_table_ref = client.dataset(ts_dataset_id).table(ts_table_id)
 
+    # *** Overwrite: clear tables before inserting this run ***
+    truncate_snap_sql = f"TRUNCATE TABLE `{project_id}.{snap_dataset_id}.{snap_table_id}`"
+    truncate_ts_sql = f"TRUNCATE TABLE `{project_id}.{ts_dataset_id}.{ts_table_id}`"
+
+    print(f"Running: {truncate_snap_sql}")
+    client.query(truncate_snap_sql).result()
+    print("Snapshot table truncated before load")
+
+    print(f"Running: {truncate_ts_sql}")
+    client.query(truncate_ts_sql).result()
+    print("Timeseries table truncated before load")
+
     offset = 0
     total_snap_rows = 0
     total_ts_rows = 0
@@ -142,7 +154,6 @@ def main():
         ts_rows_to_insert = []
 
         for rel in releases:
-            # basic sanity: require id
             if rel.get("id") is None:
                 continue
 
