@@ -2,7 +2,7 @@ name: tiktok-snaps-to-bigquery
 
 on:
   schedule:
-    - cron: "0 */3 * * *"   # every 3 hours (UTC)
+    - cron: "30 11/3 * * *"   # every 3 hours (UTC)
   workflow_dispatch: {}      # allow manual run
 
 jobs:
