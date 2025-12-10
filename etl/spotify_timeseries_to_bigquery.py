@@ -143,6 +143,23 @@ def main():
     src_table_ref = client.dataset(src_dataset_id).table(src_table_id)
     ctry_table_ref = client.dataset(ctry_dataset_id).table(ctry_table_id)
 
+    # *** Overwrite: clear tables before inserting this run ***
+    truncate_ts_sql = f"TRUNCATE TABLE `{project_id}.{ts_dataset_id}.{ts_table_id}`"
+    truncate_src_sql = f"TRUNCATE TABLE `{project_id}.{src_dataset_id}.{src_table_id}`"
+    truncate_ctry_sql = f"TRUNCATE TABLE `{project_id}.{ctry_dataset_id}.{ctry_table_id}`"
+
+    print(f"Running: {truncate_ts_sql}")
+    client.query(truncate_ts_sql).result()
+    print("Timeseries table truncated before load")
+
+    print(f"Running: {truncate_src_sql}")
+    client.query(truncate_src_sql).result()
+    print("Source-of-streams table truncated before load")
+
+    print(f"Running: {truncate_ctry_sql}")
+    client.query(truncate_ctry_sql).result()
+    print("Streams-by-country table truncated before load")
+
     offset = 0
     total_ts_rows = 0
     total_src_rows = 0
@@ -207,4 +224,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
