@@ -1,0 +1,4 @@
+SELECT *
+FROM ${ref("tiktok_snaps")} AS snap
+LEFT JOIN ${ref("promo_exp")} AS exp
+  ON snap.promo_expense_id = exp.coda_row_id
