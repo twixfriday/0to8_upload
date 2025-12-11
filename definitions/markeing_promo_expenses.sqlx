@@ -1,0 +1,44 @@
+config {
+    type: "view",
+    schema: "analytics",
+    name: "marketing_promo_expenses"
+}
+
+SELECT
+  id,
+  coda_row_id,
+  telegram_manager_nickname,
+  telegram_manager_id,
+  SAFE_CAST(rate AS NUMERIC)        AS rate,
+  currency,
+  promo_link,
+  promo_date,
+  parsing_date,
+  promo_platform,
+  permanent_video_link,
+  raw_track_title,
+  raw_artist_name,
+  video_id,
+  profile_id,
+  profile_name,
+  spotify_track_title,
+  spotify_artist_name,
+  spotify_isrc,
+  spotify_upc,
+  SAFE_CAST(views   AS INT64)     AS views,
+  SAFE_CAST(likes   AS INT64)     AS likes,
+  SAFE_CAST(comments AS INT64)    AS comments,
+  SAFE_CAST(shares  AS INT64)     AS shares,
+  last_snapshot_date,
+  created_in_coda,
+  duplicate,
+  original_sound,
+  created_at,
+  updated_at,
+  profile_link,
+  deleted,
+  snapshots_count,
+  json_data,
+  sound_url
+FROM
+  ${ref("promo_expenses")}
