@@ -1,0 +1,42 @@
+config {
+    type: "view",
+    schema: "analytics",
+    name: "marketing_promo_tracks"
+}
+
+SELECT
+  id,
+  track_title,
+  artist_name,
+  isrc,
+  SAFE_CAST(total_views AS INT64) AS total_views,
+  SAFE_CAST(total_likes AS INT64) AS total_likes,
+  SAFE_CAST(total_comments AS INT64) AS total_comments,
+  SAFE_CAST(total_shares AS INT64) AS total_shares,
+  SAFE_CAST(sp_streams_total AS INT64) AS sp_streams_total,
+  SAFE_CAST(sp_listeners_total AS INT64) AS sp_listeners_total,
+  SAFE_CAST(sp_streams_per_listener_total AS NUMERIC) AS sp_streams_per_listener_total,
+  SAFE_CAST(sp_playlist_adds_total AS INT64) AS sp_playlist_adds_total,
+  SAFE_CAST(sp_saves_total AS INT64) AS sp_saves_total,
+  SAFE_CAST(sp_user_total AS INT64) AS sp_user_total,
+  SAFE_CAST(sp_network_total AS INT64) AS sp_network_total,
+  SAFE_CAST(sp_catalog_total AS INT64) AS sp_catalog_total,
+  SAFE_CAST(sp_other_total AS INT64) AS sp_other_total,
+  SAFE_CAST(sp_personalized_total AS INT64) AS sp_personalized_total,
+  SAFE_CAST(sp_editorial_total AS INT64) AS sp_editorial_total,
+  updated_at,
+  sp_updated_at,
+  sp_top_5_countries,
+  sp_json,
+  sp_last_day_streams,
+  sp_last_day_listeners,
+  sp_last_day_streams_per_listener,
+  sp_last_day_playlist_adds_total,
+  sp_release_date,
+  sp_total_stream_count,
+  upc,
+  last_parse_status,
+  last_parse_attempt_at,
+  last_parse_error
+FROM
+  ${ref("promo_tracks")}

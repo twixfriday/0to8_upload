@@ -1,0 +1,32 @@
+config {
+    type: "view",
+    schema: "analytics",
+    name: "marketing_promo_release"
+}
+
+SELECT
+  id,
+  release_title,
+  artist_name,
+  upc,
+  SAFE_CAST(sp_streams_total AS INT64) AS sp_streams_total,
+  SAFE_CAST(sp_listeners_total AS INT64) AS sp_listeners_total,
+  SAFE_CAST(sp_streams_per_listener_total AS NUMERIC) AS sp_streams_per_listener_total,
+  SAFE_CAST(sp_playlist_adds_total AS INT64) AS sp_playlist_adds_total,
+  SAFE_CAST(sp_saves_total AS INT64) AS sp_saves_total,
+  sp_last_day_streams,
+  sp_last_day_listeners,
+  sp_last_day_streams_per_listener,
+  sp_last_day_playlist_adds_total,
+  sp_release_date,
+  sp_total_stream_count,
+  sp_json,
+  sp_updated_at,
+  updated_at,
+  deleted,
+  created_at,
+  last_parse_status,
+  last_parse_attempt_at,
+  last_parse_error
+FROM
+  ${ref("promo_releases")}
