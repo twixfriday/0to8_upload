@@ -2,7 +2,7 @@ name: spotify-tracks-to-bigquery
 
 on:
   schedule:
-    - cron: "20 11/3 * * *"   # every 3 hours (UTC)
+    - cron: "55 11/3 * * *"   # every 3 hours (UTC)
   workflow_dispatch: {}      # allow manual trigger
 
 jobs:
