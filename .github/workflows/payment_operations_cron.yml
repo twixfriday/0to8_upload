@@ -2,7 +2,7 @@ name: payment-operations-to-bigquery
 
 on:
   schedule:
-    - cron: "5 11/3 * * *"   # every 3 hours
+    - cron: "30 */3 * * *"   # every 3 hours
   workflow_dispatch: {}
 
 jobs:
