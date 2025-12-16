@@ -1,0 +1,22 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_tracks_streams_by_country"
+}
+
+with base as (
+  select
+    JSON_VALUE(sp_json, '$.track.id')   as recording_id,
+    JSON_VALUE(sp_json, '$.track.isrc') as isrc,
+    sp_json
+  from ${ref("promo_tracks")}
+)
+
+select
+  recording_id,
+  isrc,
+  JSON_VALUE(g, '$.name')              as country_code,
+  JSON_VALUE(g, '$.localized_country') as country_name,
+  CAST(JSON_VALUE(g, '$.num') AS INT64) as streams
+from base,
+  UNNEST(JSON_QUERY_ARRAY(sp_json, '$.streams_by_country.geography')) as g
