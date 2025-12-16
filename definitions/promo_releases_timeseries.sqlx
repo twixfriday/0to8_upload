@@ -1,0 +1,58 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_releases_timeseries"
+}
+
+with base as (
+  select *
+  from ${ref("promo_releases")}
+)
+
+select
+  upc,
+  'saves' as metric,
+  parse_date('%Y-%m-%d', JSON_VALUE(p, '$.x')) as dt,
+  cast(JSON_VALUE(p, '$.y') as int64)          as value
+from base,
+  unnest(JSON_QUERY_ARRAY(sp_json, '$.saves.current_period_timeseries')) as p
+
+union all
+
+select
+  upc,
+  'streams' as metric,
+  parse_date('%Y-%m-%d', JSON_VALUE(p, '$.x')) as dt,
+  cast(JSON_VALUE(p, '$.y') as int64)          as value
+from base,
+  unnest(JSON_QUERY_ARRAY(sp_json, '$.streams.current_period_timeseries')) as p
+
+union all
+
+select
+  upc,
+  'listeners' as metric,
+  parse_date('%Y-%m-%d', JSON_VALUE(p, '$.x')) as dt,
+  cast(JSON_VALUE(p, '$.y') as int64)          as value
+from base,
+  unnest(JSON_QUERY_ARRAY(sp_json, '$.listeners.current_period_timeseries')) as p
+
+union all
+
+select
+  upc,
+  'playlist_adds' as metric,
+  parse_date('%Y-%m-%d', JSON_VALUE(p, '$.x')) as dt,
+  cast(JSON_VALUE(p, '$.y') as int64)          as value
+from base,
+  unnest(JSON_QUERY_ARRAY(sp_json, '$.playlist_adds.current_period_timeseries')) as p
+
+union all
+
+select
+  upc,
+  'streams_per_listener' as metric,
+  parse_date('%Y-%m-%d', JSON_VALUE(p, '$.x')) as dt,
+  cast(JSON_VALUE(p, '$.y') as float64)        as value
+from base,
+  unnest(JSON_QUERY_ARRAY(sp_json, '$.streams_per_listener.current_period_timeseries')) as p

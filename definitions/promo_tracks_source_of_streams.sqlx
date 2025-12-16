@@ -1,0 +1,24 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_tracks_source_of_streams"
+}
+
+with base as (
+  select
+    JSON_VALUE(sp_json, '$.track.id')   as recording_id,
+    JSON_VALUE(sp_json, '$.track.isrc') as isrc,
+    sp_json
+  from ${ref("promo_tracks")}
+)
+
+select
+  recording_id,
+  isrc,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.user')        AS INT64) as streams_user,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.other')       AS INT64) as streams_other,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.catalog')     AS INT64) as streams_catalog,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.network')     AS INT64) as streams_network,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.editorial')   AS INT64) as streams_editorial,
+  CAST(JSON_VALUE(sp_json, '$.source_of_streams.personalized') AS INT64) as streams_personalized
+from base
