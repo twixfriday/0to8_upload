@@ -2,7 +2,7 @@ name: spotify-timeseries-to-bigquery
 
 on:
   schedule:
-    - cron: "20 11/3 * * *"   # every 3 hours (UTC)
+    - cron: "40 */3 * * *"   # every 3 hours (UTC)
   workflow_dispatch: {}      # allow manual trigger
 
 jobs:
