@@ -1,0 +1,47 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_expenses_parsed"
+}
+
+select
+  JSON_VALUE(JSON_data, '$.id')                         as post_id,
+  JSON_VALUE(JSON_data, '$.text')                       as text,
+  JSON_VALUE(JSON_data, '$.textLanguage')               as text_language,
+  timestamp_millis(cast(JSON_VALUE(JSON_data, '$.createTime') as int64)) as create_time_ts,
+  JSON_VALUE(JSON_data, '$.createTimeISO')              as create_time_iso,
+  JSON_VALUE(JSON_data, '$.locationCreated')            as location_created,
+  cast(JSON_VALUE(JSON_data, '$.isAd') as bool)         as is_ad,
+
+  -- authorMeta
+  JSON_VALUE(JSON_data, '$.authorMeta.id')              as author_id,
+  JSON_VALUE(JSON_data, '$.authorMeta.name')            as author_name,
+  JSON_VALUE(JSON_data, '$.authorMeta.profileUrl')      as author_profile_url,
+  JSON_VALUE(JSON_data, '$.authorMeta.nickName')        as author_nick,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.verified') as bool) as author_verified,
+  JSON_VALUE(JSON_data, '$.authorMeta.signature')       as author_signature,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.following') as int64) as author_following,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.friends')   as int64) as author_friends,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.fans')      as int64) as author_fans,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.heart')     as int64) as author_hearts,
+  cast(JSON_VALUE(JSON_data, '$.authorMeta.video')     as int64) as author_videos,
+
+  -- musicMeta
+  JSON_VALUE(JSON_data, '$.musicMeta.musicId')          as music_id,
+  JSON_VALUE(JSON_data, '$.musicMeta.musicName')        as music_name,
+  JSON_VALUE(JSON_data, '$.musicMeta.musicAuthor')      as music_author,
+
+  -- videoMeta
+  cast(JSON_VALUE(JSON_data, '$.videoMeta.height')   as int64) as video_height,
+  cast(JSON_VALUE(JSON_data, '$.videoMeta.width')    as int64) as video_width,
+  cast(JSON_VALUE(JSON_data, '$.videoMeta.duration') as int64) as video_duration,
+
+  -- metrics
+  cast(JSON_VALUE(JSON_data, '$.diggCount')     as int64) as digg_count,
+  cast(JSON_VALUE(JSON_data, '$.shareCount')    as int64) as share_count,
+  cast(JSON_VALUE(JSON_data, '$.playCount')     as int64) as play_count,
+  cast(JSON_VALUE(JSON_data, '$.collectCount')  as int64) as collect_count,
+  cast(JSON_VALUE(JSON_data, '$.commentCount')  as int64) as comment_count
+
+from
+  ${ref("promo_expenses")}

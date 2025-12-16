@@ -1,0 +1,15 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "promo_expenses_hashtags"
+}
+
+select
+  JSON_VALUE(JSON_data, '$.id') as post_id,
+  o                             as hashtag_index,
+  JSON_VALUE(h, '$.id')         as hashtag_id,
+  JSON_VALUE(h, '$.name')       as hashtag_name
+from
+  ${ref("promo_expenses")},
+  unnest(JSON_QUERY_ARRAY(JSON_data, '$.hashtags')) as h with offset as o
+
