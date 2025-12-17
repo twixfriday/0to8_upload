@@ -1,12 +1,8 @@
 config {
   type: "table",
   schema: "analytics",
-  name: "tiktok_merged"
-}
-WITH(
-SELECT
-FROM
-)
+  name: "tiktok_merged"}
+
 SELECT
 p.coda_row_id,
 p.telegram_manager_nickname,
@@ -49,4 +45,3 @@ s.snapshot_date
 from ${ref("snapshots")} as s
 LEFT JOIN dotted-cedar-473703-a1.analytics.promo_expenses_tiktok as p
 ON s.promo_expense_id = p.coda_row_id
-LIMIT 100
