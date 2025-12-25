@@ -1,0 +1,47 @@
+config {
+  type: "table",
+  schema: "analytics",
+  name: "tiktok_merged"}
+
+SELECT
+p.coda_row_id,
+p.telegram_manager_nickname,
+p.telegram_manager_id,
+p.rate,
+p.currency,
+p.promo_link,
+p.promo_date,
+p.parsing_date,
+p.promo_platform,
+p.permanent_video_link,
+p.raw_track_title,
+p.raw_artist_name,
+p.video_id,
+p.profile_id,
+p.profile_name,
+p.spotify_track_title,
+p.spotify_artist_name,
+p.spotify_isrc,
+p.spotify_upc,
+p.views as total_views,
+p.likes as total_likes,
+p.comments as total_comments,
+p.shares as total_shares,
+p.last_snapshot_date,
+p.created_in_coda,
+p.duplicate,
+p.original_sound,
+p.created_at,
+p.updated_at,
+p.profile_link,
+p.deleted,
+p.snapshots_count,
+p.sound_url,
+CAST (s.views AS INTEGER) AS views_snapshot,
+CAST (s.likes AS INTEGER) AS likes_snapshot,
+CAST (s.comments AS INTEGER) AS comments_snapshot,
+CAST (s.shares AS INTEGER) AS shares_snapshot,
+s.snapshot_date
+from ${ref("snapshots")} as s
+LEFT JOIN dotted-cedar-473703-a1.analytics.promo_expenses_tiktok as p
+ON s.promo_expense_id = p.coda_row_id

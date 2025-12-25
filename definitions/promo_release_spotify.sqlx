@@ -1,7 +1,7 @@
 config {
     type: "view",
     schema: "analytics",
-    name: "promo_release_spotify"
+    name: "marketing_promo_release"
 }
 
 SELECT

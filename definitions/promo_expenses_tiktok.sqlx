@@ -1,7 +1,7 @@
 config {
     type: "view",
     schema: "analytics",
-    name: "promo_expenses_tiktok"
+    name: "marketing_promo_expenses"
 }
 
 SELECT
@@ -39,6 +39,7 @@ SELECT
   deleted,
   snapshots_count,
   json_data,
-  sound_url
+  sound_url,
+  label
 FROM
   ${ref("promo_expenses")}

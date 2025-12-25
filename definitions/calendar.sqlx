@@ -1,0 +1,38 @@
+WITH
+  c AS (
+    SELECT
+      d AS date
+    FROM
+      UNNEST(
+        GENERATE_DATE_ARRAY(
+          DATE '2025-11-01',
+          DATE '2027-12-31',
+          INTERVAL 1 DAY
+        )
+      ) AS d
+  ),
+  t AS (
+    SELECT
+      *
+    FROM
+      ${ref("promo_tracks_timeseries")}
+    PIVOT (
+      SUM(value)
+      FOR metric IN ('streams', 'saves', 'listeners')
+    )
+  ),
+
+SELECT
+  c.date,
+  t.isrc,
+  t.streams,
+  t.saves,
+  t.listeners
+FROM
+  c
+LEFT JOIN
+  t
+ON
+  c.date = t.dt
+ORDER BY
+  c.date;

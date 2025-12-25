@@ -1,0 +1,10 @@
+config {
+    type: "view",
+    schema: "analytics",
+    name: "check"
+}
+
+SELECT
+*
+FROM
+  ${ref("payment_operations")}
