@@ -39,6 +39,7 @@ SELECT
   deleted,
   snapshots_count,
   json_data,
-  sound_url
+  sound_url,
+  label
 FROM
   ${ref("promo_expenses")}
