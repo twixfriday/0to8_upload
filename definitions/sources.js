@@ -15,7 +15,8 @@
     "payment_operation",
     "promo_releases",
     "promo_tracks",
-    "snapshots"
+    "snapshots",
+    "creator_videos"
 ].forEach(name =>
     declare({
         database: "dotted-cedar-473703-a1",
