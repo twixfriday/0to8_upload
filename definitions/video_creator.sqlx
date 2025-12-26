@@ -40,4 +40,4 @@ SELECT
   json_data,
   audd_recognition,
   shazam_recognition
-FROM ${ref("creator_videos")};
+FROM ${ref("creator_videos")}
