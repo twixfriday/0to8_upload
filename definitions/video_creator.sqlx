@@ -1,0 +1,43 @@
+config {
+  type: "view",
+  schema: "analytics",
+  name: "video_creator"
+}
+
+SELECT
+  id,
+  telegram_manager_nickname,
+  telegram_manager_id,
+  raw_track_title,
+  raw_artist_name,
+  promo_link,
+  promo_platform,
+  video_id,
+  profile_id,
+  profile_name,
+  profile_link,
+  track_title,
+  artist_name,
+  music_id,
+  original_sound,
+  promo_date,
+  parsing_date,
+  permanent_video_link,
+  spotify_track_title,
+  spotify_artist_name,
+  spotify_isrc,
+  spotify_upc,
+  CAST(views AS INT64) AS views,
+  CAST(likes AS INT64) AS likes,
+  CAST(comments AS INT64) AS comments,
+  CAST(shares AS INT64) AS shares,
+  created_at,
+  updated_at,
+  last_snapshot_date,
+  snapshots_count,
+  deleted,
+  duplicate,
+  json_data,
+  audd_recognition,
+  shazam_recognition
+FROM ${ref("creator_videos")};
